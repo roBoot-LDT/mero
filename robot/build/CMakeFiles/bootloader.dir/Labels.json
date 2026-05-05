@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/CMakeFiles/bootloader"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/CMakeFiles/bootloader.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/CMakeFiles/bootloader-complete.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule"
+		},
+		{
+			"file" : "C:/obsidian/main/mero/robot/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"bootloader"
+		],
+		"name" : "bootloader"
+	}
+}
