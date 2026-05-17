@@ -463,6 +463,7 @@ C:/obsidian/main/mero/robot/build/esp-idf/esp_gdbstub/CMakeFiles/list_install_co
 C:/obsidian/main/mero/robot/build/esp-idf/esp_gdbstub/CMakeFiles/install.dir
 C:/obsidian/main/mero/robot/build/esp-idf/esp_gdbstub/CMakeFiles/install/local.dir
 C:/obsidian/main/mero/robot/build/esp-idf/esp_gdbstub/CMakeFiles/install/strip.dir
+C:/obsidian/main/mero/robot/build/esp-idf/bt/CMakeFiles/__idf_bt.dir
 C:/obsidian/main/mero/robot/build/esp-idf/bt/CMakeFiles/edit_cache.dir
 C:/obsidian/main/mero/robot/build/esp-idf/bt/CMakeFiles/rebuild_cache.dir
 C:/obsidian/main/mero/robot/build/esp-idf/bt/CMakeFiles/list_install_components.dir
