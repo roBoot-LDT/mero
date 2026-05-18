@@ -1,0 +1,78 @@
+Command: ninja flash
+[1/5] C:\Windows\system32\cmd.exe /C "cd /D C:\obsidian\main\mero\camera\build\esp-idf\esptool_py && C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/obsidian/main/mero/camera/build/partition_table/partition-table.bin C:/obsidian/main/mero/camera/build/camera.bin"
+camera.bin binary size 0xeeb20 bytes. Smallest app partition is 0x100000 bytes. 0x114e0 bytes (7%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] C:\Windows\system32\cmd.exe /C "cd /D C:\obsidian\main\mero\camera\build\bootloader\esp-idf\esptool_py && C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 C:/obsidian/main/mero/camera/build/bootloader/bootloader.bin"
+Bootloader binary size 0x6680 bytes. 0x980 bytes (8%) free.
+[3/5] No install step for 'bootloader'
+[4/5] Completed 'bootloader'
+[4/5] C:\Windows\system32\cmd.exe /C "cd /D C:\esp-idf\components\esptool_py && C:\apps\Espressif\tools\cmake\3.30.2\bin\cmake.exe -D IDF_PATH=C:/esp-idf -D SERIAL_TOOL=C:/apps/Espressif/python_env/idf5.5_py3.11_env/Scripts/python.exe;;C:/esp-idf/components/esptool_py/esptool/esptool.py;--chip;esp32 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=C:/obsidian/main/mero/camera/build -P C:/esp-idf/components/esptool_py/run_serial_tool.cmake"
+esptool.py --chip esp32 -p COM5 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 bootloader/bootloader.bin 0x10000 camera.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.11.dev1
+Serial port COM5
+Connecting.....
+Chip is ESP32-D0WD-V3 (revision v3.1)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: b0:cb:d8:e8:ce:18
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00007fff...
+Flash will be erased from 0x00010000 to 0x000fefff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 26240 bytes to 16487...
+Writing at 0x00001000... (50 %)
+Writing at 0x000075fb... (100 %)
+Wrote 26240 bytes (16487 compressed) at 0x00001000 in 0.5 seconds (effective 410.7 kbit/s)...
+Hash of data verified.
+Compressed 977696 bytes to 586166...
+Writing at 0x00010000... (2 %)
+Writing at 0x00020095... (5 %)
+Writing at 0x0002a214... (8 %)
+Writing at 0x00032bbd... (11 %)
+Writing at 0x0003cb8d... (13 %)
+Writing at 0x00042f09... (16 %)
+Writing at 0x00048bfd... (19 %)
+Writing at 0x0004fbda... (22 %)
+Writing at 0x00057b89... (25 %)
+Writing at 0x0005dd82... (27 %)
+Writing at 0x00063b93... (30 %)
+Writing at 0x00069ce6... (33 %)
+Writing at 0x0006fa83... (36 %)
+Writing at 0x00075d20... (38 %)
+Writing at 0x0007b30d... (41 %)
+Writing at 0x00080b69... (44 %)
+Writing at 0x000868b0... (47 %)
+Writing at 0x0008c13d... (50 %)
+Writing at 0x00091766... (52 %)
+Writing at 0x00097212... (55 %)
+Writing at 0x0009d31c... (58 %)
+Writing at 0x000a2d74... (61 %)
+Writing at 0x000a8dac... (63 %)
+Writing at 0x000aebc8... (66 %)
+Writing at 0x000b4866... (69 %)
+Writing at 0x000ba4f8... (72 %)
+Writing at 0x000c04d6... (75 %)
+Writing at 0x000c67a7... (77 %)
+Writing at 0x000cbfed... (80 %)
+Writing at 0x000d5b8a... (83 %)
+Writing at 0x000dcf13... (86 %)
+Writing at 0x000e2c8a... (88 %)
+Writing at 0x000e8f5f... (91 %)
+Writing at 0x000eead3... (94 %)
+Writing at 0x000f4f76... (97 %)
+Writing at 0x000fa2b2... (100 %)
+Wrote 977696 bytes (586166 compressed) at 0x00010000 in 13.3 seconds (effective 587.1 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.0 seconds (effective 1284.3 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...

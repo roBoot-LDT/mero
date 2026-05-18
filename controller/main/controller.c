@@ -12,13 +12,21 @@
 
 static const char *TAG = "mero-remote";
 
-#define BTN_FORWARD  GPIO_NUM_26
-#define BTN_BACK     GPIO_NUM_27
-#define BTN_LEFT     GPIO_NUM_14
-#define BTN_RIGHT    GPIO_NUM_12
-#define BTN_STOP     GPIO_NUM_13
+#define BTN_FORWARD  GPIO_NUM_21
+#define BTN_BACK     GPIO_NUM_34
+#define BTN_LEFT     GPIO_NUM_13
+#define BTN_RIGHT    GPIO_NUM_33
+#define BTN_STOP     GPIO_NUM_16
+
+// Светодиоды
+#define LED_POWER    GPIO_NUM_12   // горит всегда когда включён
+#define LED_SEND     GPIO_NUM_27  // мигает при отправке команды
 
 #define ROBOT_NAME   "mero-robot"
+
+static const ble_uuid128_t cmd_svc_uuid =
+    BLE_UUID128_INIT(0x12,0x34,0x56,0x78,0x12,0x34,0x12,0x34,
+                     0x12,0x34,0x12,0x34,0x12,0x34,0x56,0x78);
 
 static uint8_t own_addr_type;
 static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
@@ -28,9 +36,31 @@ static bool connected = false;
 static void start_scan(void);
 static int gap_event(struct ble_gap_event *event, void *arg);
 
+static void leds_init(void) {
+    gpio_config_t cfg = {
+        .pin_bit_mask = (1ULL << LED_POWER) | (1ULL << LED_SEND),
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&cfg);
+    gpio_set_level(LED_POWER, 1);  // сразу включаем
+    gpio_set_level(LED_SEND, 0);
+}
+
+static int on_write(uint16_t conn_h, const struct ble_gatt_error *error,
+                    struct ble_gatt_attr *attr, void *arg) {
+    if (error->status != 0)
+        ESP_LOGE(TAG, "write failed: %d", error->status);
+    return 0;
+}
+
 static void send_cmd(char c) {
     if (!connected || cmd_attr_handle == 0) return;
-    ble_gattc_write_no_rsp_flat(conn_handle, cmd_attr_handle, &c, 1);
+    gpio_set_level(LED_SEND, 1);
+    ble_gattc_write_flat(conn_handle, cmd_attr_handle, &c, 1, on_write, NULL);
+    gpio_set_level(LED_SEND, 0);
 }
 
 static void buttons_init(void) {
@@ -66,18 +96,23 @@ static void buttons_task(void *arg) {
     }
 }
 
-// GATT discovery — ищем нашу характеристику
 static int on_disc_chr(uint16_t conn_h, const struct ble_gatt_error *error,
                        const struct ble_gatt_chr *chr, void *arg) {
     if (error->status == 0 && chr) {
-        // Берём первую характеристику с правом записи
         if ((chr->properties & BLE_GATT_CHR_F_WRITE) ||
             (chr->properties & BLE_GATT_CHR_F_WRITE_NO_RSP)) {
             if (cmd_attr_handle == 0) {
                 cmd_attr_handle = chr->val_handle;
-                ESP_LOGI(TAG, "writable characteristic found, handle=%d", 
+                ESP_LOGI(TAG, "writable characteristic found, handle=%d",
                          cmd_attr_handle);
                 connected = true;
+                // Мигнуть LED_SEND 3 раза — сигнал успешного подключения
+                for (int i = 0; i < 3; i++) {
+                    gpio_set_level(LED_SEND, 1);
+                    vTaskDelay(pdMS_TO_TICKS(100));
+                    gpio_set_level(LED_SEND, 0);
+                    vTaskDelay(pdMS_TO_TICKS(100));
+                }
             }
         }
     }
@@ -87,8 +122,11 @@ static int on_disc_chr(uint16_t conn_h, const struct ble_gatt_error *error,
 static int on_disc_svc(uint16_t conn_h, const struct ble_gatt_error *error,
                        const struct ble_gatt_svc *svc, void *arg) {
     if (error->status == 0 && svc) {
-        ble_gattc_disc_all_chrs(conn_h, svc->start_handle,
-                                svc->end_handle, on_disc_chr, NULL);
+        if (ble_uuid_cmp(&svc->uuid.u, &cmd_svc_uuid.u) == 0) {
+            ESP_LOGI(TAG, "found cmd service, discovering characteristics...");
+            ble_gattc_disc_all_chrs(conn_h, svc->start_handle,
+                                    svc->end_handle, on_disc_chr, NULL);
+        }
     }
     return 0;
 }
@@ -115,45 +153,54 @@ static int gap_event(struct ble_gap_event *event, void *arg) {
             memcmp(fields.name, ROBOT_NAME, fields.name_len) == 0) {
             ESP_LOGI(TAG, "found mero-robot, connecting...");
             ble_gap_disc_cancel();
+            struct ble_gap_conn_params conn_params = {
+                .scan_itvl           = 16,
+                .scan_window         = 16,
+                .itvl_min            = 24,
+                .itvl_max            = 40,
+                .latency             = 0,
+                .supervision_timeout = 400,
+                .min_ce_len          = 0,
+                .max_ce_len          = 0,
+            };
             ble_gap_connect(own_addr_type, &event->disc.addr,
-                           5000, NULL, gap_event, NULL);
+                           5000, &conn_params, gap_event, NULL);
         }
         break;
     }
     case BLE_GAP_EVENT_CONNECT:
-    if (event->connect.status == 0) {
-        conn_handle = event->connect.conn_handle;
-        ESP_LOGI(TAG, "connected");
-        ble_gattc_disc_all_svcs(conn_handle, on_disc_svc, NULL);
-    } else {
-        ESP_LOGE(TAG, "connect failed, scanning again");
+        if (event->connect.status == 0) {
+            conn_handle = event->connect.conn_handle;
+            ESP_LOGI(TAG, "connected");
+            ble_gattc_disc_all_svcs(conn_handle, on_disc_svc, NULL);
+        } else {
+            ESP_LOGE(TAG, "connect failed, scanning again");
+            start_scan();
+        }
+        break;
+    case BLE_GAP_EVENT_DISCONNECT:
+        connected = false;
+        cmd_attr_handle = 0;
+        conn_handle = BLE_HS_CONN_HANDLE_NONE;
+        ESP_LOGW(TAG, "disconnected, scanning again");
+        // Быстро мигнуть — сигнал потери связи
+        for (int i = 0; i < 5; i++) {
+            gpio_set_level(LED_SEND, 1);
+            vTaskDelay(pdMS_TO_TICKS(50));
+            gpio_set_level(LED_SEND, 0);
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
         start_scan();
-    }
-    break;
-case BLE_GAP_EVENT_DISCONNECT:
-    connected = false;
-    cmd_attr_handle = 0;
-    conn_handle = BLE_HS_CONN_HANDLE_NONE;
-    ESP_LOGW(TAG, "disconnected, scanning again");
-    start_scan();
-    break;
+        break;
     default: break;
     }
     return 0;
 }
 
-
-
 static void on_sync(void) {
     ble_hs_id_infer_auto(0, &own_addr_type);
-    ESP_LOGI(TAG, "connecting to mero-robot by MAC...");
-    
-    ble_addr_t robot_addr = {
-        .type = BLE_ADDR_PUBLIC,
-        .val = {0xa6, 0x75, 0xc3, 0xa4, 0xb5, 0x80}  // MAC в обратном порядке
-    };
-    
-    ble_gap_connect(own_addr_type, &robot_addr, 10000, NULL, gap_event, NULL);
+    ESP_LOGI(TAG, "scanning for mero-robot...");
+    start_scan();
 }
 
 static void on_reset(int reason) {
@@ -168,6 +215,7 @@ static void nimble_host_task(void *param) {
 void app_main(void) {
     ESP_LOGI(TAG, "boot");
     ESP_ERROR_CHECK(nvs_flash_init());
+    leds_init();
     buttons_init();
 
     nimble_port_init();

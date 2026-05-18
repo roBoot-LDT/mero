@@ -14,10 +14,10 @@
 
 static const char *TAG = "mero-robot";
 
-#define IN1 GPIO_NUM_12
-#define IN2 GPIO_NUM_11
+#define IN1 GPIO_NUM_18
+#define IN2 GPIO_NUM_17
 #define IN3 GPIO_NUM_16
-#define IN4 GPIO_NUM_17
+#define IN4 GPIO_NUM_15
 
 #define DEVICE_NAME "mero-robot"
 
@@ -93,6 +93,30 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
     { 0 }
 };
 
+static void start_advertising(void);
+
+static int gap_event(struct ble_gap_event *event, void *arg) {
+    switch (event->type) {
+    case BLE_GAP_EVENT_CONNECT:
+        if (event->connect.status == 0) {
+            ESP_LOGI(TAG, "controller connected, handle=%d",
+                     event->connect.conn_handle);
+        } else {
+            ESP_LOGE(TAG, "connection failed, restarting advertising");
+            start_advertising();
+        }
+        break;
+    case BLE_GAP_EVENT_DISCONNECT:
+        ESP_LOGW(TAG, "controller disconnected, reason=%d",
+                 event->disconnect.reason);
+        start_advertising();
+        break;
+    default:
+        break;
+    }
+    return 0;
+}
+
 static void start_advertising(void) {
     struct ble_hs_adv_fields fields = {0};
     fields.flags = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
@@ -105,7 +129,7 @@ static void start_advertising(void) {
     adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
     adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
     ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER,
-                      &adv_params, NULL, NULL);
+                      &adv_params, gap_event, NULL);
     ESP_LOGI(TAG, "advertising started");
 }
 
