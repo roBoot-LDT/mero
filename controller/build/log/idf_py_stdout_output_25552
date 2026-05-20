@@ -1,0 +1,81 @@
+Command: C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/esp-idf/tools/idf_monitor.py -p COM5 -b 115200 --toolchain-prefix xtensa-esp32-elf- --target esp32 --revision 0 C:\obsidian\main\mero\controller\build\controller.elf C:\obsidian\main\mero\controller\build\bootloader\bootloader.elf --force-color -m 'C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe' 'C:/esp-idf/\tools\idf.py' '-p' 'COM5'
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6380
+ho 0 tail 12 room 4
+load:0x40078000,len:15916
+load:0x40080400,len:3860
+entry 0x40080638
+[0;32mI (29) boot: ESP-IDF v5.5.1 2nd stage bootloader[0m
+[0;32mI (29) boot: compile time May 14 2026 02:00:55[0m
+[0;32mI (29) boot: Multicore bootloader[0m
+[0;32mI (31) boot: chip revision: v3.1[0m
+[0;32mI (33) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (37) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32: SPI Flash Size : 2MB[0m
+[0;32mI (44) boot: Enabling RNG early entropy source...[0m
+[0;32mI (49) boot: Partition Table:[0m
+[0;32mI (51) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (64) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (71) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (77) boot: End of partition table[0m
+[0;32mI (81) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=0aae0h ( 43744) map[0m
+[0;32mI (103) esp_image: segment 1: paddr=0001ab08 vaddr=3ffbdb60 size=036e4h ( 14052) load[0m
+[0;32mI (108) esp_image: segment 2: paddr=0001e1f4 vaddr=40080000 size=01e24h (  7716) load[0m
+[0;32mI (112) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=18108h ( 98568) map[0m
+[0;32mI (148) esp_image: segment 4: paddr=00038130 vaddr=40081e24 size=0ba34h ( 47668) load[0m
+[0;32mI (167) esp_image: segment 5: paddr=00043b6c vaddr=50000000 size=00020h (    32) load[0m
+[0;32mI (174) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (174) boot: Disabling RNG early entropy source...[0m
+[0;32mI (185) cpu_start: Multicore app[0m
+[0;32mI (193) cpu_start: Pro cpu start user code[0m
+[0;32mI (193) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (194) app_init: Application information:[0m
+[0;32mI (194) app_init: Project name:     controller[0m
+[0;32mI (198) app_init: App version:      24a59fd-dirty[0m
+[0;32mI (202) app_init: Compile time:     May 19 2026 18:15:04[0m
+[0;32mI (207) app_init: ELF file SHA256:  9e06033e9...[0m
+[0;32mI (212) app_init: ESP-IDF:          v5.5.1[0m
+[0;32mI (215) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (219) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (223) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (227) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (233) heap_init: At 3FFAE6E0 len 0000F480 (61 KiB): DRAM[0m
+[0;32mI (238) heap_init: At 3FFC1B20 len 0001E4E0 (121 KiB): DRAM[0m
+[0;32mI (244) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (249) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (255) heap_init: At 4008D858 len 000127A8 (73 KiB): IRAM[0m
+[0;32mI (261) spi_flash: detected chip: generic[0m
+[0;32mI (264) spi_flash: flash io: dio[0m
+[0;33mW (267) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (279) coexist: coex firmware version: b0bcc39[0m
+[0;32mI (284) main_task: Started on CPU0[0m
+[0;32mI (294) main_task: Calling app_main()[0m
+[1;31mE (294) gpio: gpio_pulldown_en(116): GPIO number error (input-only pad has no internal PD)[0m
+[1;31mE (294) gpio: gpio_pulldown_en(116): GPIO number error (input-only pad has no internal PD)[0m
+[1;31mE (304) gpio: gpio_pulldown_en(116): GPIO number error (input-only pad has no internal PD)[0m
+[1;31mE (304) gpio: gpio_pulldown_en(116): GPIO number error (input-only pad has no internal PD)[0m
+[0;32mI (314) gpio-test: GPIO test ready. Press buttons — active pin will appear.[0m
+[0;32mI (324) gpio-test: Pins with pull-up (active LOW): 2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33[0m
+[0;32mI (334) gpio-test: Pins with pull-down (active HIGH): 34,35,36,39[0m
+[0;32mI (11274) gpio-test: >>> BUTTON PRESS detected on GPIO 36[0m
+[0;32mI (14854) gpio-test: >>> BUTTON PRESS detected on GPIO 33[0m
+[0;32mI (15414) gpio-test: >>> BUTTON PRESS detected on GPIO 33[0m
+[0;32mI (16554) gpio-test: >>> BUTTON PRESS detected on GPIO 33[0m
+[0;32mI (17534) gpio-test: >>> BUTTON PRESS detected on GPIO 13[0m
+[0;32mI (17874) gpio-test: >>> BUTTON PRESS detected on GPIO 13[0m
+[0;32mI (20934) gpio-test: >>> BUTTON PRESS detected on GPIO 21[0m
+[0;32mI (21234) gpio-test: >>> BUTTON PRESS detected on GPIO 21[0m
+[0;32mI (24514) gpio-test: >>> BUTTON PRESS detected on GPIO 13[0m
+[0;32mI (24754) gpio-test: >>> BUTTON PRESS detected on GPIO 33[0m
+[0;32mI (25214) gpio-test: >>> BUTTON PRESS detected on GPIO 13[0m
+[0;32mI (25494) gpio-test: >>> BUTTON PRESS detected on GPIO 33[0m
+[0;32mI (26374) gpio-test: >>> BUTTON PRESS detected on GPIO 21[0m
+[0;32mI (32334) gpio-test: >>> BUTTON PRESS detected on GPIO 13[0m
+[0;32mI (32674) gpio-test: >>> BUTTON PRESS detected on GPIO 21[0m
+[0;32mI (33074) gpio-test: >>> BUTTON PRESS detected on GPIO 33[0m

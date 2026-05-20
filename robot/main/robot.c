@@ -50,8 +50,8 @@ static void handle_cmd(char c) {
     switch (c) {
         case 'f': motor_a( 1); motor_b( 1); ESP_LOGI(TAG,"forward"); break;
         case 'b': motor_a(-1); motor_b(-1); ESP_LOGI(TAG,"back");    break;
-        case 'l': motor_a(-1); motor_b( 1); ESP_LOGI(TAG,"left");    break;
-        case 'r': motor_a( 1); motor_b(-1); ESP_LOGI(TAG,"right");   break;
+        case 'l': motor_a(1); motor_b( -1); ESP_LOGI(TAG,"left");    break;
+        case 'r': motor_a(-1); motor_b(1); ESP_LOGI(TAG,"right");   break;
         case 's': motor_a( 0); motor_b( 0); ESP_LOGI(TAG,"stop");    break;
         default: break;
     }
@@ -95,24 +95,31 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
 
 static void start_advertising(void);
 
-static int gap_event(struct ble_gap_event *event, void *arg) {
+static int gap_event_handler(struct ble_gap_event *event, void *arg) {
     switch (event->type) {
     case BLE_GAP_EVENT_CONNECT:
         if (event->connect.status == 0) {
-            ESP_LOGI(TAG, "controller connected, handle=%d",
-                     event->connect.conn_handle);
+            ESP_LOGI(TAG, "client connected");
+            // Обновляем параметры соединения для стабильности
+            struct ble_gap_upd_params params = {
+                .itvl_min            = 40,   // 50мс
+                .itvl_max            = 80,   // 100мс
+                .latency             = 0,
+                .supervision_timeout = 1000, // 10 секунд
+                .min_ce_len          = 0,
+                .max_ce_len          = 0,
+            };
+            ble_gap_update_params(event->connect.conn_handle, &params);
         } else {
-            ESP_LOGE(TAG, "connection failed, restarting advertising");
             start_advertising();
         }
         break;
     case BLE_GAP_EVENT_DISCONNECT:
-        ESP_LOGW(TAG, "controller disconnected, reason=%d",
-                 event->disconnect.reason);
+        motor_a(0); motor_b(0);
+        ESP_LOGI(TAG, "client disconnected");
         start_advertising();
         break;
-    default:
-        break;
+    default: break;
     }
     return 0;
 }
@@ -129,7 +136,7 @@ static void start_advertising(void) {
     adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
     adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
     ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER,
-                      &adv_params, gap_event, NULL);
+                      &adv_params, gap_event_handler, NULL);
     ESP_LOGI(TAG, "advertising started");
 }
 

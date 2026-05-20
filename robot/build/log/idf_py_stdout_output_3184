@@ -1,0 +1,61 @@
+Command: ninja flash
+[1/5] C:\Windows\system32\cmd.exe /C "cd /D C:\obsidian\main\mero\robot\build\esp-idf\esptool_py && C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/obsidian/main/mero/robot/build/partition_table/partition-table.bin C:/obsidian/main/mero/robot/build/robot.bin"
+robot.bin binary size 0x84080 bytes. Smallest app partition is 0x100000 bytes. 0x7bf80 bytes (48%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] C:\Windows\system32\cmd.exe /C "cd /D C:\obsidian\main\mero\robot\build\bootloader\esp-idf\esptool_py && C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/obsidian/main/mero/robot/build/bootloader/bootloader.bin"
+Bootloader binary size 0x5240 bytes. 0x2dc0 bytes (36%) free.
+[3/5] No install step for 'bootloader'
+[4/5] Completed 'bootloader'
+[4/5] C:\Windows\system32\cmd.exe /C "cd /D C:\esp-idf\components\esptool_py && C:\apps\Espressif\tools\cmake\3.30.2\bin\cmake.exe -D IDF_PATH=C:/esp-idf -D SERIAL_TOOL=C:/apps/Espressif/python_env/idf5.5_py3.11_env/Scripts/python.exe;;C:/esp-idf/components/esptool_py/esptool/esptool.py;--chip;esp32s3 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=C:/obsidian/main/mero/robot/build -P C:/esp-idf/components/esptool_py/run_serial_tool.cmake"
+esptool.py --chip esp32s3 -p COM3 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 80m --flash_size 2MB 0x0 bootloader/bootloader.bin 0x10000 robot.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.11.dev1
+Serial port COM3
+Connecting....
+Chip is ESP32-S3 (QFN56) (revision v0.2)
+Features: WiFi, BLE, Embedded PSRAM 8MB (AP_3v3)
+Crystal is 40MHz
+MAC: 80:b5:4e:c3:75:a4
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00010000 to 0x00094fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 21056 bytes to 13387...
+Writing at 0x00000000... (100 %)
+Wrote 21056 bytes (13387 compressed) at 0x00000000 in 0.7 seconds (effective 240.7 kbit/s)...
+Hash of data verified.
+Compressed 540800 bytes to 318397...
+Writing at 0x00010000... (5 %)
+Writing at 0x0001c274... (10 %)
+Writing at 0x00024e90... (15 %)
+Writing at 0x0002cca2... (20 %)
+Writing at 0x00032464... (25 %)
+Writing at 0x00038778... (30 %)
+Writing at 0x0003f2ad... (35 %)
+Writing at 0x0004517a... (40 %)
+Writing at 0x0004b250... (45 %)
+Writing at 0x00050aea... (50 %)
+Writing at 0x0005649b... (55 %)
+Writing at 0x0005c471... (60 %)
+Writing at 0x00062267... (65 %)
+Writing at 0x00068620... (70 %)
+Writing at 0x0006e269... (75 %)
+Writing at 0x00073a3f... (80 %)
+Writing at 0x0007d6d2... (85 %)
+Writing at 0x000849f6... (90 %)
+Writing at 0x0008ab0a... (95 %)
+Writing at 0x000910bd... (100 %)
+Wrote 540800 bytes (318397 compressed) at 0x00010000 in 7.5 seconds (effective 580.5 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.1 seconds (effective 357.8 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...

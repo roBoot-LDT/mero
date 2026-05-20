@@ -1,0 +1,2 @@
+Command: ninja all
+[1/4] C:\Windows\system32\cmd.exe /C "cd /D C:\obsidian\main\mero\controller\build\esp-idf\esptool_py && C:\apps\Espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe C:/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/obsidian/main/mero/controller/build/partition_table/partition-table.bin C:/obsidian/main/mero/controller/build/controller.bin"

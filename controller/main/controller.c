@@ -13,10 +13,10 @@
 static const char *TAG = "mero-remote";
 
 #define BTN_FORWARD  GPIO_NUM_21
-#define BTN_BACK     GPIO_NUM_34
+#define BTN_BACK     GPIO_NUM_15
 #define BTN_LEFT     GPIO_NUM_13
 #define BTN_RIGHT    GPIO_NUM_33
-#define BTN_STOP     GPIO_NUM_16
+#define BTN_STOP     GPIO_NUM_17
 
 // Светодиоды
 #define LED_POWER    GPIO_NUM_12   // горит всегда когда включён
@@ -49,18 +49,21 @@ static void leds_init(void) {
     gpio_set_level(LED_SEND, 0);
 }
 
-static int on_write(uint16_t conn_h, const struct ble_gatt_error *error,
-                    struct ble_gatt_attr *attr, void *arg) {
-    if (error->status != 0)
-        ESP_LOGE(TAG, "write failed: %d", error->status);
-    return 0;
-}
+// static int on_write(uint16_t conn_h, const struct ble_gatt_error *error,
+//                     struct ble_gatt_attr *attr, void *arg) {
+//     if (error->status != 0)
+//         ESP_LOGE(TAG, "write failed: %d", error->status);
+//     return 0;
+// }
 
 static void send_cmd(char c) {
     if (!connected || cmd_attr_handle == 0) return;
-    gpio_set_level(LED_SEND, 1);
-    ble_gattc_write_flat(conn_handle, cmd_attr_handle, &c, 1, on_write, NULL);
-    gpio_set_level(LED_SEND, 0);
+    if (conn_handle == BLE_HS_CONN_HANDLE_NONE) return;
+    
+    int rc = ble_gattc_write_no_rsp_flat(conn_handle, cmd_attr_handle, &c, 1);
+    if (rc != 0) {
+        ESP_LOGW(TAG, "write skipped: %d", rc);
+    }
 }
 
 static void buttons_init(void) {
@@ -91,6 +94,7 @@ static void buttons_task(void *arg) {
             last_cmd = cmd;
             send_cmd(cmd);
             ESP_LOGI(TAG, "cmd: %c", cmd);
+            vTaskDelay(pdMS_TO_TICKS(50)); 
         }
         vTaskDelay(pdMS_TO_TICKS(50));
     }
@@ -159,7 +163,7 @@ static int gap_event(struct ble_gap_event *event, void *arg) {
                 .itvl_min            = 24,
                 .itvl_max            = 40,
                 .latency             = 0,
-                .supervision_timeout = 400,
+                .supervision_timeout = 800,
                 .min_ce_len          = 0,
                 .max_ce_len          = 0,
             };

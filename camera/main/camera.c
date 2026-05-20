@@ -156,9 +156,16 @@ static void wifi_init(void) {
 void app_main(void) {
     ESP_LOGI(TAG, "boot");
     ESP_ERROR_CHECK(nvs_flash_init());
+    
     if (camera_init() != ESP_OK) {
         ESP_LOGE(TAG, "Camera failed, halting");
         return;
+    }
+
+    sensor_t *s = esp_camera_sensor_get();
+    if (s != NULL) {
+        s->set_vflip(s, 1);
+        s->set_hmirror(s, 1);
     }
     wifi_init();
     ESP_LOGI(TAG, "Waiting for WiFi...");
